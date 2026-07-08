@@ -1,0 +1,54 @@
+# ─── Secrets & Environment ───────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+.env.production
+apps/web/.env
+apps/backend/.env
+# Keep .env.example files (they document required vars, no secrets)
+!.env.example
+!apps/**/.env.example
+
+# ─── Node / Next.js ──────────────────────────────────────────────────────────
+node_modules/
+apps/web/node_modules/
+.next/
+apps/web/.next/
+out/
+apps/web/out/
+.vercel/
+
+# ─── Python / Django ─────────────────────────────────────────────────────────
+apps/backend/venv/
+apps/backend/__pycache__/
+apps/backend/**/__pycache__/
+apps/backend/**/*.pyc
+apps/backend/**/*.pyo
+apps/backend/staticfiles/
+apps/backend/db.sqlite3
+apps/backend/.env
+
+# ─── Build Logs ──────────────────────────────────────────────────────────────
+*.log
+build-*.log
+.next-dev.log
+
+# ─── OS Files ────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Editor ──────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ─── Test & Coverage ─────────────────────────────────────────────────────────
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+
+# ─── Sentry ──────────────────────────────────────────────────────────────────
+.sentryclirc

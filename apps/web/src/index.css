@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%; /* Soft slate-50 */
+    --foreground: 222 47% 11%; /* Slate-900 */
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 221 83% 53%; /* Vibrant Blue */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%; /* Slate-100 */
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%; /* Slate-500 */
+    --accent: 160 84% 39%; /* Vibrant Teal */
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214 32% 91%; /* Slate-200 */
+    --input: 214 32% 91%;
+    --ring: 221 83% 53%;
+    --radius: 1rem;
+  }
+  .dark {
+    --background: 222 47% 11%; /* Slate-900 */
+    --foreground: 210 40% 98%;
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217 91% 60%; /* Lighter Blue */
+    --primary-foreground: 222 47% 11%;
+    --secondary: 217 33% 17%; /* Slate-800 */
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 160 84% 45%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 217 91% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Outfit', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-balance tracking-tight;
+  }
+}
+
+@layer components {
+  .banner-ad {
+    @apply relative w-full overflow-hidden rounded-2xl bg-secondary/30 border border-border/50 flex items-center justify-center min-h-[120px] transition-colors hover:bg-secondary/40;
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.02) 10px, rgba(0,0,0,0.02) 20px);
+  }
+  
+  .dark .banner-ad {
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.02) 10px, rgba(255,255,255,0.02) 20px);
+  }
+
+  .view-toggle-btn {
+    @apply flex items-center justify-center p-2 rounded-lg text-muted-foreground hover:bg-secondary hover:text-foreground transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+  }
+
+  .view-toggle-btn[data-state="active"] {
+    @apply bg-primary/10 text-primary shadow-sm;
+  }
+
+  .pagination-control {
+    @apply flex items-center gap-1;
+  }
+  
+  .pagination-btn {
+    @apply h-10 w-10 flex items-center justify-center rounded-lg border border-border bg-background text-foreground hover:bg-secondary hover:text-foreground transition-colors disabled:opacity-50 disabled:pointer-events-none;
+  }
+  
+  .pagination-btn[aria-current="page"] {
+    @apply bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground;
+  }
+}
+
+@layer utilities {
+  .soft-bg {
+    background: radial-gradient(circle at top right, hsl(221, 83%, 95%), transparent 40%),
+                radial-gradient(circle at bottom left, hsl(160, 84%, 95%), transparent 40%);
+  }
+  .dark .soft-bg {
+    background: radial-gradient(circle at top right, hsl(221, 83%, 15%), transparent 40%),
+                radial-gradient(circle at bottom left, hsl(160, 84%, 15%), transparent 40%);
+  }
+  
+  .text-gradient {
+    background: linear-gradient(135deg, hsl(221, 83%, 53%) 0%, hsl(160, 84%, 39%) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .dark .text-gradient {
+    background: linear-gradient(135deg, hsl(217, 91%, 60%) 0%, hsl(160, 84%, 45%) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}

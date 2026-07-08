@@ -1,0 +1,22 @@
+{
+  "name": "monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently --kill-others --raw \"npm run dev --prefix apps/web\" \"npm run dev:backend\"",
+    "dev:frontend": "npm run dev --prefix apps/web",
+    "dev:backend": "cd apps/backend && venv\\Scripts\\python.exe manage.py runserver 0.0.0.0:8000",
+    "build": "concurrently --raw \"npm run build --prefix apps/web\"",
+    "start": "concurrently --kill-others --raw \"npm run start --prefix apps/web\" \"npm run start:backend\"",
+    "start:backend": "cd apps/backend && venv\\Scripts\\gunicorn.exe config.wsgi --log-file -",
+    "lint": "concurrently --raw \"npm run lint --prefix apps/web\"",
+    "backend:migrate": "cd apps/backend && venv\\Scripts\\python.exe manage.py migrate",
+    "backend:seed": "cd apps/backend && venv\\Scripts\\python.exe manage.py seed_data"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "workspaces": [
+    "apps/*"
+  ]
+}
