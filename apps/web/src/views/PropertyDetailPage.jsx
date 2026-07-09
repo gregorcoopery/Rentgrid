@@ -290,7 +290,7 @@ const PropertyDetailPage = () => {
 
             {/* Sidebar - Pricing & Actions */}
             <div className="lg:col-span-1 space-y-6">
-              <Card className="sticky top-24 border-border/50 shadow-md rounded-2xl overflow-hidden">
+              <Card className="sticky top-24 border-border/50 shadow-md rounded-2xl overflow-hidden glass-card">
                 <CardHeader className="bg-secondary/30 border-b border-border/50 pb-6">
                   <CardTitle className="text-xl">Pricing & Reservation</CardTitle>
                 </CardHeader>

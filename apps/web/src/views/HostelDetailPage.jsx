@@ -318,7 +318,7 @@ const HostelDetailPage = () => {
 
             {/* Sidebar - Pricing & Actions */}
             <div className="lg:col-span-1">
-              <Card className="sticky top-24 card-shadow border-primary/30 bg-card/80 backdrop-blur-md">
+              <Card className="sticky top-24 card-shadow border-primary/30 glass-card">
                 <CardHeader className="border-b border-border/50 pb-4">
                   <CardTitle className="text-white">Pricing</CardTitle>
                 </CardHeader>

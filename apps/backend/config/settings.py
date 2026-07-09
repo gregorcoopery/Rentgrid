@@ -128,7 +128,13 @@ RATELIMIT_USE_CACHE = 'default'
 # In development, allow all. In production, set CORS_ALLOWED_ORIGINS env var.
 _cors_origins_env = os.getenv('CORS_ALLOWED_ORIGINS', '')
 if _cors_origins_env:
-    CORS_ALLOWED_ORIGINS = [o.strip() for o in _cors_origins_env.split(',') if o.strip()]
+    CORS_ALLOWED_ORIGINS = []
+    for o in _cors_origins_env.split(','):
+        origin = o.strip()
+        if origin:
+            if not origin.startswith(('http://', 'https://')):
+                origin = f"https://{origin}"
+            CORS_ALLOWED_ORIGINS.append(origin)
     CORS_ALLOW_ALL_ORIGINS = False
 else:
     # Dev fallback — restrict to localhost origins
@@ -162,7 +168,17 @@ if sentry_dsn:
     except ImportError:
         pass
 
-CSRF_TRUSTED_ORIGINS = os.getenv(
-    "CSRF_TRUSTED_ORIGINS",
-    ""
-).split(",")
+_csrf_origins_env = os.getenv("CSRF_TRUSTED_ORIGINS", "")
+if _csrf_origins_env:
+    CSRF_TRUSTED_ORIGINS = []
+    for o in _csrf_origins_env.split(','):
+        origin = o.strip()
+        if origin:
+            if not origin.startswith(('http://', 'https://')):
+                origin = f"https://{origin}"
+            CSRF_TRUSTED_ORIGINS.append(origin)
+else:
+    CSRF_TRUSTED_ORIGINS = [
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+    ]

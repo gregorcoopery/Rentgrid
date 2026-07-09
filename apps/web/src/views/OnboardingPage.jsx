@@ -78,7 +78,10 @@ export default function OnboardingPage() {
     setSaving(true);
 
     try {
-      const completedProfile = await submitOnboardingProfile(role, profile);
+      const completedProfile = await submitOnboardingProfile(role, {
+        ...profile,
+        clerkId: user?.id,
+      });
       await user?.update({
         unsafeMetadata: {
           ...user.unsafeMetadata,
@@ -111,7 +114,7 @@ export default function OnboardingPage() {
         <Header />
         <main className="flex-1 py-10">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <Card className="mx-auto max-w-3xl border-border/50 shadow-sm">
+            <Card className="mx-auto max-w-3xl border-border/50 shadow-sm glass-card">
               <CardHeader className="border-b border-border/50">
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <Icon className="h-6 w-6" />

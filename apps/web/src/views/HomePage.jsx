@@ -9,7 +9,24 @@ import Header from '@/components/Header.jsx';
 import Footer from '@/components/Footer.jsx';
 import RoleSignupDialog from '@/components/RoleSignupDialog.jsx';
 
+const HERO_IMAGES = [
+  'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80',
+  'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1920&q=80',
+  'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1920&q=80',
+  'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1920&q=80',
+  'https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?auto=format&fit=crop&w=1920&q=80',
+];
+
 const HomePage = () => {
+  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % HERO_IMAGES.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   const features = [
     {
       icon: Shield,
@@ -39,7 +56,23 @@ const HomePage = () => {
         <Header />
 
         {/* Hero Section */}
-        <section className="relative pt-20 pb-32 lg:pt-32 lg:pb-40 overflow-hidden">
+        <section className="relative pt-20 pb-32 lg:pt-32 lg:pb-40 overflow-hidden min-h-[80vh] flex items-center">
+          {/* Fading Slideshow Background */}
+          <div className="absolute inset-0 z-0">
+            {HERO_IMAGES.map((imgUrl, index) => (
+              <div
+                key={imgUrl}
+                className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out"
+                style={{
+                  backgroundImage: `url('${imgUrl}')`,
+                  opacity: index === currentImageIndex ? 0.38 : 0,
+                }}
+              />
+            ))}
+            {/* Smooth overlay blending the image with theme background */}
+            <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/70 to-background" />
+          </div>
+
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="max-w-4xl mx-auto text-center space-y-8">
               <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 px-4 py-1.5 text-sm font-medium mb-4 rounded-full">

@@ -448,32 +448,58 @@ def onboarding(request):
     if not user and clerk_id:
         user = User.objects.filter(clerk_id=clerk_id).first()
         
-    if user:
-        user.role = role
-        user.name = profile.get('name', user.name)
-        user.phone = profile.get('phone', user.phone)
-        user.onboarding_complete = True
-        user.verification_status = 'verified' if role in ['tenant', 'super-admin'] else 'pending-review'
-        user.metadata.update(profile)
-        user.save()
-        
-        # Security: Write role to Clerk publicMetadata (server-side, tamper-proof)
-        # This prevents users from self-promoting by editing unsafeMetadata on the client.
-        clerk_secret = os.getenv('CLERK_SECRET_KEY')
-        uid = clerk_id or user.clerk_id
-        if clerk_secret and uid:
-            try:
-                requests.patch(
-                    f'https://api.clerk.com/v1/users/{uid}/metadata',
-                    json={'public_metadata': {'role': role, 'onboardingComplete': True}},
-                    headers={
-                        'Authorization': f'Bearer {clerk_secret}',
-                        'Content-Type': 'application/json',
-                    },
-                    timeout=5
+    try:
+        if user:
+            user.role = role
+            user.name = profile.get('name', user.name)
+            user.phone = profile.get('phone', user.phone)
+            user.onboarding_complete = True
+            user.verification_status = 'verified' if role in ['tenant', 'super-admin'] else 'pending-review'
+            if user.metadata is None:
+                user.metadata = {}
+            user.metadata.update(profile)
+            user.save()
+        else:
+            # Create user in Django custom table
+            if clerk_id:
+                user_id = f"clerk_{clerk_id}"
+                user = User.objects.create(
+                    id=user_id,
+                    clerk_id=clerk_id,
+                    role=role,
+                    name=profile.get('name', ''),
+                    email=profile.get('email', email or ''),
+                    phone=profile.get('phone', ''),
+                    onboarding_complete=True,
+                    verification_status='verified' if role in ['tenant', 'super-admin'] else 'pending-review',
+                    metadata=profile
                 )
-            except Exception:
-                pass  # Don't block onboarding if Clerk API call fails
+            else:
+                return JsonResponse({
+                    'error': 'Cannot register user without clerkId. Webhook sync may be pending.'
+                }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'error': f'Database error during onboarding: {str(e)}'
+        }, status=500)
+        
+    # Security: Write role to Clerk publicMetadata (server-side, tamper-proof)
+    # This prevents users from self-promoting by editing unsafeMetadata on the client.
+    clerk_secret = os.getenv('CLERK_SECRET_KEY')
+    uid = clerk_id or (user.clerk_id if user else None)
+    if clerk_secret and uid:
+        try:
+            requests.patch(
+                f'https://api.clerk.com/v1/users/{uid}/metadata',
+                json={'public_metadata': {'role': role, 'onboardingComplete': True}},
+                headers={
+                    'Authorization': f'Bearer {clerk_secret}',
+                    'Content-Type': 'application/json',
+                },
+                timeout=5
+            )
+        except Exception:
+            pass  # Don't block onboarding if Clerk API call fails
         
     return JsonResponse({
         'profile': {

@@ -4,6 +4,7 @@ import AnalyticsProvider from '@/components/AnalyticsProvider.jsx';
 import ClientToaster from '@/components/ClientToaster.jsx';
 import ClerkClientProvider from '@/components/ClerkClientProvider.jsx';
 import { PermissionProvider } from '@/components/PermissionProvider.jsx';
+import GlobalBackground from '@/components/GlobalBackground.jsx';
 
 export const metadata = {
   title: 'RentGrid',
@@ -16,6 +17,7 @@ export default function RootLayout({ children }) {
       <body>
         <ClerkClientProvider>
           <PermissionProvider>
+            <GlobalBackground />
             {children}
             <Suspense fallback={null}>
               <AnalyticsProvider />
