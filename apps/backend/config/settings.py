@@ -161,3 +161,8 @@ if sentry_dsn:
         )
     except ImportError:
         pass
+
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    "CSRF_TRUSTED_ORIGINS",
+    ""
+).split(",")
