@@ -40,6 +40,9 @@ export default function PropertyCreatePage() {
       await submitWorkflow('property', {
         ...form,
         price: Number(form.price),
+        amenities: form.amenities
+          ? form.amenities.split(',').map((s) => s.trim()).filter(Boolean)
+          : [],
         status: 'draft',
       });
       toast({
@@ -119,7 +122,8 @@ export default function PropertyCreatePage() {
                   </div>
                   <div className="space-y-2 sm:col-span-2">
                     <Label htmlFor="amenities">Amenities</Label>
-                    <Input id="amenities" placeholder="Power, water, security, parking" value={form.amenities} onChange={(event) => updateField('amenities', event.target.value)} />
+                    <Input id="amenities" placeholder="power, water, security, parking" value={form.amenities} onChange={(event) => updateField('amenities', event.target.value)} />
+                    <p className="text-xs text-muted-foreground">Separate with commas, e.g. &ldquo;wifi, power, security&rdquo;</p>
                   </div>
                   <div className="space-y-2 sm:col-span-2">
                     <Label htmlFor="description">Description</Label>

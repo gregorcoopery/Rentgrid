@@ -43,7 +43,7 @@ const InspectorDashboard = () => {
         />
 
         {/* Main Content */}
-        <main className="flex-1 flex flex-col min-w-0">
+        <main className="flex-1 flex flex-col min-w-0 pt-14 lg:pt-0">
           {/* Top Header */}
           <header className="h-16 border-b border-border/50 bg-background flex items-center justify-between px-4 sm:px-6 lg:px-8">
             <div className="flex items-center flex-1">
@@ -180,7 +180,7 @@ const InspectorDashboard = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="p-4 bg-secondary/30 rounded-xl space-y-2">
-                    <p className="text-sm font-bold text-foreground">Chika Inspector</p>
+                    <p className="text-sm font-bold text-foreground">{displayName}</p>
                     <p className="text-xs text-muted-foreground">Role: Inspector</p>
                   </div>
                   <Button onClick={() => runDashboardWorkflow('settings', 'Settings updated', {}, 'Inspector settings updated successfully.')}>Save Settings</Button>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { LayoutDashboard, Calendar, MapPin, Wallet, Settings, Search, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useClerkDashboardUser } from '@/hooks/use-clerk-dashboard-user';
@@ -42,7 +43,7 @@ const AgentDashboard = () => {
         />
 
         {/* Main Content */}
-        <main className="flex-1 flex flex-col min-w-0">
+        <main className="flex-1 flex flex-col min-w-0 pt-14 lg:pt-0">
           {/* Top Header */}
           <header className="h-16 border-b border-border/50 bg-background flex items-center justify-between px-4 sm:px-6 lg:px-8">
             <div className="flex items-center flex-1">
@@ -147,15 +148,25 @@ const AgentDashboard = () => {
                   <CardTitle className="text-lg">My Assigned Listings</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4">
-                  <div className="divide-y divide-border/50">
-                    <div className="py-4 flex justify-between items-center">
-                      <div>
-                        <p className="font-semibold text-foreground">Luxury 2-Bed Apartment</p>
-                        <p className="text-xs text-muted-foreground">Lekki Phase 1, Lagos</p>
-                      </div>
-                      <Badge className="bg-primary/20 text-primary border-none">Assigned</Badge>
+                  {inspections.length === 0 ? (
+                    <div className="p-8 text-center">
+                      <MapPin className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+                      <p className="font-medium text-foreground">No assigned properties yet</p>
+                      <p className="text-sm text-muted-foreground mt-1">Properties assigned to you will appear here.</p>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="divide-y divide-border/50">
+                      {inspections.map((insp) => (
+                        <div key={insp.id} className="py-4 flex justify-between items-center">
+                          <div>
+                            <p className="font-semibold text-foreground">Inspection #{insp.id?.slice(-6)}</p>
+                            <p className="text-xs text-muted-foreground">{insp.status} · {insp.scheduledFor ? new Date(insp.scheduledFor).toLocaleDateString() : 'Date TBD'}</p>
+                          </div>
+                          <Badge className="bg-primary/20 text-primary border-none">Assigned</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}
@@ -168,9 +179,15 @@ const AgentDashboard = () => {
                 <CardContent className="space-y-4">
                   <div className="p-6 bg-primary/5 rounded-xl border border-primary/10">
                     <span className="text-xs text-muted-foreground uppercase font-bold">Commission Balance</span>
-                    <p className="text-3xl font-bold text-primary mt-1">₦45,000</p>
+                    <p className="text-3xl font-bold text-primary mt-1">{metrics.commissionBalance ? `₦${Number(metrics.commissionBalance).toLocaleString()}` : '₦—'}</p>
+                    <p className="text-sm text-muted-foreground mt-2">Balance updates when Paystack is connected.</p>
                   </div>
-                  <Button onClick={() => runDashboardWorkflow('payout', 'Payout requested', { amount: 45000 }, 'Agent payout request sent to bank.')}>Withdraw Earnings</Button>
+                  <Button
+                    disabled={!metrics.commissionBalance}
+                    onClick={() => runDashboardWorkflow('payout', 'Payout requested', { amount: metrics.commissionBalance }, 'Agent payout request sent to bank.')}
+                  >
+                    Withdraw Earnings
+                  </Button>
                 </CardContent>
               </Card>
             )}
@@ -182,7 +199,7 @@ const AgentDashboard = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="p-4 bg-secondary/30 rounded-xl space-y-2">
-                    <p className="text-sm font-bold text-foreground">Michael Agent</p>
+                    <p className="text-sm font-bold text-foreground">{displayName}</p>
                     <p className="text-xs text-muted-foreground">Role: Agent</p>
                   </div>
                   <Button onClick={() => notifyDashboardAction('Settings updated', 'Settings saved successfully.')}>Save Settings</Button>

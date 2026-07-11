@@ -112,9 +112,9 @@ const BrowseHostelsPage = () => {
   const FilterContent = () => (
     <div className="space-y-6">
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-white">University</label>
+        <label className="text-sm font-semibold text-foreground">University</label>
         <Select value={selectedUniversity} onValueChange={setSelectedUniversity}>
-          <SelectTrigger className="bg-background/50 border-border/50 text-white">
+          <SelectTrigger className="bg-background border-border">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -128,7 +128,7 @@ const BrowseHostelsPage = () => {
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-white">Price Range (₦/year)</label>
+        <label className="text-sm font-semibold text-foreground">Price Range (₦/year)</label>
         <Slider
           value={priceRange}
           onValueChange={setPriceRange}
@@ -143,9 +143,9 @@ const BrowseHostelsPage = () => {
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-white">Room Type</label>
+        <label className="text-sm font-semibold text-foreground">Room Type</label>
         <Select value={selectedRoomType} onValueChange={setSelectedRoomType}>
-          <SelectTrigger className="bg-background/50 border-border/50 text-white">
+          <SelectTrigger className="bg-background border-border">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -159,29 +159,29 @@ const BrowseHostelsPage = () => {
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-white">Room Size</label>
+        <label className="text-sm font-semibold text-foreground">Room Size</label>
         <Input 
           placeholder="e.g. 12 sqm or 3 by 4 sqm" 
           value={roomSize}
           onChange={(e) => setRoomSize(e.target.value)}
-          className="bg-background/50 border-border/50 text-white placeholder:text-gray-500"
+          className="bg-background border-border"
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-white">Amenities</label>
+        <label className="text-sm font-semibold text-foreground">Amenities</label>
         <div className="space-y-3">
           {amenities.map((amenity) => (
             <div key={amenity.id} className="flex items-center space-x-2">
               <Checkbox
-                id={amenity.id}
+                id={`hostel-desktop-${amenity.id}`}
                 checked={selectedAmenities.includes(amenity.id)}
                 onCheckedChange={() => toggleAmenity(amenity.id)}
                 className="border-primary/50 data-[state=checked]:bg-primary"
               />
               <label
-                htmlFor={amenity.id}
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-gray-300"
+                htmlFor={`hostel-desktop-${amenity.id}`}
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-muted-foreground"
               >
                 {amenity.label}
               </label>
@@ -191,19 +191,19 @@ const BrowseHostelsPage = () => {
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-white">Hostel Neighborhood</label>
+        <label className="text-sm font-semibold text-foreground">Hostel Neighborhood</label>
         <div className="space-y-3 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
           {neighborhoodOptions.map((option) => (
             <div key={option.id} className="flex items-center space-x-2">
               <Checkbox
-                id={option.id}
+                id={`hostel-neighborhood-${option.id}`}
                 checked={selectedNeighborhoods.includes(option.id)}
                 onCheckedChange={() => toggleNeighborhood(option.id)}
                 className="border-accent/50 data-[state=checked]:bg-accent"
               />
               <label
-                htmlFor={option.id}
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-gray-300"
+                htmlFor={`hostel-neighborhood-${option.id}`}
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-muted-foreground"
               >
                 {option.label}
               </label>
@@ -221,7 +221,7 @@ const BrowseHostelsPage = () => {
         <meta name="description" content="Browse and filter verified off-campus hostels near Nigerian universities. Find your perfect accommodation with our advanced search filters." />
       </Helmet>
 
-      <div className="min-h-screen flex flex-col gradient-bg">
+      <div className="min-h-screen flex flex-col soft-bg">
         <Header />
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
@@ -303,6 +303,7 @@ const BrowseHostelsPage = () => {
                         <img
                           src={hostel.image}
                           alt={`${hostel.name} - Student accommodation`}
+                          loading="lazy"
                           className="w-full h-full object-cover"
                         />
                         <Badge className="absolute top-4 right-4 bg-accent text-accent-foreground font-bold shadow-lg">

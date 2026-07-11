@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Mail, Phone } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import Header from '@/components/Header.jsx';
 import Footer from '@/components/Footer.jsx';
 
@@ -110,17 +110,11 @@ const FAQPage = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Button asChild variant="outline" size="lg" className="w-full bg-background text-foreground hover:bg-secondary border-border/50 rounded-xl h-14">
+                <div className="flex justify-center">
+                  <Button asChild variant="outline" size="lg" className="bg-background text-foreground hover:bg-secondary border-border/50 rounded-xl h-14 px-8">
                     <a href="mailto:support@rentgrid.ng">
                       <Mail className="mr-2 h-5 w-5" />
                       support@rentgrid.ng
-                    </a>
-                  </Button>
-                  <Button asChild variant="outline" size="lg" className="w-full bg-background text-foreground hover:bg-secondary border-border/50 rounded-xl h-14">
-                    <a href="tel:+2348001234567">
-                      <Phone className="mr-2 h-5 w-5" />
-                      +234 800 123 4567
                     </a>
                   </Button>
                 </div>

@@ -13,6 +13,7 @@ import { getDashboardData } from '@/lib/marketplace-client';
 const TenantDashboard = () => {
   const { displayName, initials } = useClerkDashboardUser();
   const [activeSection, setActiveSection] = useState('Overview');
+  const [maintenanceDescription, setMaintenanceDescription] = useState('');
   const [dashData, setDashData] = useState(null);
 
   useEffect(() => {
@@ -46,7 +47,7 @@ const TenantDashboard = () => {
         />
 
         {/* Main Content */}
-        <main className="flex-1 flex flex-col min-w-0">
+        <main className="flex-1 flex flex-col min-w-0 pt-14 lg:pt-0">
           {/* Top Header */}
           <header className="h-16 border-b border-border/50 bg-background flex items-center justify-between px-4 sm:px-6 lg:px-8">
             <div className="flex items-center flex-1">
@@ -68,29 +69,42 @@ const TenantDashboard = () => {
             {activeSection === 'Overview' && (
               <>
                 {/* Active Rental Card */}
-                <Card className="border-border/50 shadow-sm rounded-2xl mb-8 overflow-hidden">
-                  <div className="bg-primary/5 p-6 border-b border-border/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
-                      <Badge className="bg-primary text-primary-foreground mb-2">Active Lease</Badge>
-                      <h2 className="text-xl font-bold text-foreground">Luxury 2-Bed Apartment</h2>
-                      <p className="text-muted-foreground flex items-center mt-1">
-                        Lekki Phase 1, Lagos
-                      </p>
+                {reservations.length > 0 ? (
+                  <Card className="border-border/50 shadow-sm rounded-2xl mb-8 overflow-hidden">
+                    <div className="bg-primary/5 p-6 border-b border-border/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                      <div>
+                        <Badge className="bg-primary text-primary-foreground mb-2">Active Lease</Badge>
+                        <h2 className="text-xl font-bold text-foreground">{reservations[0].listingName || 'Your Rental'}</h2>
+                        <p className="text-muted-foreground flex items-center mt-1">
+                          {reservations[0].location || 'Location not set'}
+                        </p>
+                      </div>
+                      <div className="text-left md:text-right">
+                        <p className="text-sm text-muted-foreground">Reservation Amount</p>
+                        <p className="text-2xl font-bold text-foreground">₦{reservations[0].amount?.toLocaleString() || '—'}</p>
+                        <p className="text-sm text-muted-foreground font-medium capitalize">Status: {reservations[0].status || 'pending'}</p>
+                      </div>
                     </div>
-                    <div className="text-left md:text-right">
-                      <p className="text-sm text-muted-foreground">Next Payment Due</p>
-                      <p className="text-2xl font-bold text-foreground">₦350,000</p>
-                      <p className="text-sm text-destructive font-medium">Due in 14 days</p>
-                    </div>
-                  </div>
-                  <CardContent className="p-6 bg-background">
-                    <div className="flex flex-wrap gap-4">
-                      <Button className="rounded-full shadow-sm" onClick={() => runDashboardWorkflow('reservation', 'Rent payment started', { listingId: '1', amount: 350000 }, 'Payment intent recorded. Connect Paystack or Flutterwave to collect funds.')}>Pay Rent Now</Button>
-                      <Button variant="outline" className="rounded-full" onClick={() => setActiveSection('Maintenance')}>Request Maintenance</Button>
-                      <Button variant="outline" className="rounded-full" onClick={() => notifyDashboardAction('Lease agreement', 'Your lease document viewer will open here once document storage is connected.')}>View Lease Agreement</Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                    <CardContent className="p-6 bg-background">
+                      <div className="flex flex-wrap gap-4">
+                        <Button className="rounded-full shadow-sm" onClick={() => runDashboardWorkflow('reservation', 'Rent payment started', { listingId: reservations[0].id, amount: reservations[0].amount }, 'Payment intent recorded. Connect Paystack or Flutterwave to collect funds.')}>Pay Rent Now</Button>
+                        <Button variant="outline" className="rounded-full" onClick={() => setActiveSection('Maintenance')}>Request Maintenance</Button>
+                        <Button variant="outline" className="rounded-full" onClick={() => notifyDashboardAction('Lease agreement', 'Your lease document viewer will open here once document storage is connected.')}>View Lease Agreement</Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <Card className="border-border/50 shadow-sm rounded-2xl mb-8">
+                    <CardContent className="p-8 text-center">
+                      <Home className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+                      <p className="font-medium text-foreground">No active lease yet</p>
+                      <p className="text-sm text-muted-foreground mt-1">Once you complete a reservation, your lease details will appear here.</p>
+                      <Button variant="link" className="mt-2 text-primary" asChild>
+                        <Link to="/browse-rentals">Browse Properties</Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )}
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* Upcoming Inspections */}
@@ -169,24 +183,35 @@ const TenantDashboard = () => {
                   <CardTitle className="text-lg">My Active Lease</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-4 bg-secondary/30 rounded-xl">
-                      <span className="text-xs text-muted-foreground uppercase font-semibold">Property name</span>
-                      <p className="font-bold text-foreground mt-1">Luxury 2-Bed Apartment</p>
+                  {reservations.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="p-4 bg-secondary/30 rounded-xl">
+                        <span className="text-xs text-muted-foreground uppercase font-semibold">Property</span>
+                        <p className="font-bold text-foreground mt-1">{reservations[0].listingName || 'Your Rental'}</p>
+                      </div>
+                      <div className="p-4 bg-secondary/30 rounded-xl">
+                        <span className="text-xs text-muted-foreground uppercase font-semibold">Amount</span>
+                        <p className="font-bold text-foreground mt-1">₦{reservations[0].amount?.toLocaleString() || '—'}/year</p>
+                      </div>
+                      <div className="p-4 bg-secondary/30 rounded-xl">
+                        <span className="text-xs text-muted-foreground uppercase font-semibold">Status</span>
+                        <p className="font-bold text-foreground mt-1 capitalize">{reservations[0].status || 'pending'}</p>
+                      </div>
+                      <div className="p-4 bg-secondary/30 rounded-xl">
+                        <span className="text-xs text-muted-foreground uppercase font-semibold">Lease Term</span>
+                        <p className="font-bold text-foreground mt-1">12 Months (Renewable)</p>
+                      </div>
                     </div>
-                    <div className="p-4 bg-secondary/30 rounded-xl">
-                      <span className="text-xs text-muted-foreground uppercase font-semibold">Location</span>
-                      <p className="font-bold text-foreground mt-1">Lekki Phase 1, Lagos</p>
+                  ) : (
+                    <div className="p-8 text-center">
+                      <Home className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+                      <p className="font-medium text-foreground">No active lease</p>
+                      <p className="text-sm text-muted-foreground mt-1">Your lease details will appear here once a reservation is confirmed.</p>
+                      <Button variant="link" className="mt-2 text-primary" asChild>
+                        <Link to="/browse-rentals">Browse Properties</Link>
+                      </Button>
                     </div>
-                    <div className="p-4 bg-secondary/30 rounded-xl">
-                      <span className="text-xs text-muted-foreground uppercase font-semibold">Rent Price</span>
-                      <p className="font-bold text-foreground mt-1">₦3,500,000 / year</p>
-                    </div>
-                    <div className="p-4 bg-secondary/30 rounded-xl">
-                      <span className="text-xs text-muted-foreground uppercase font-semibold">Lease Term</span>
-                      <p className="font-bold text-foreground mt-1">12 Months (Renewable)</p>
-                    </div>
-                  </div>
+                  )}
                 </CardContent>
               </Card>
             )}
@@ -247,9 +272,26 @@ const TenantDashboard = () => {
                     <h3 className="font-semibold text-foreground">Submit a Request</h3>
                     <div className="space-y-2">
                       <label className="text-xs text-muted-foreground font-semibold uppercase">Description</label>
-                      <Input placeholder="Describe the maintenance issue..." />
+                      <Input
+                        placeholder="Describe the maintenance issue..."
+                        value={maintenanceDescription}
+                        onChange={(e) => setMaintenanceDescription(e.target.value)}
+                      />
                     </div>
-                    <Button onClick={() => runDashboardWorkflow('maintenance', 'Maintenance request created', { listingId: '1', title: 'Leaking pipe' }, 'Your maintenance request has been submitted to the landlord.')}>Submit Request</Button>
+                    <Button
+                      disabled={!maintenanceDescription.trim()}
+                      onClick={() => {
+                        runDashboardWorkflow(
+                          'maintenance',
+                          'Maintenance request created',
+                          { listingId: reservations[0]?.id || '1', title: maintenanceDescription },
+                          'Your maintenance request has been submitted to the landlord.'
+                        );
+                        setMaintenanceDescription('');
+                      }}
+                    >
+                      Submit Request
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

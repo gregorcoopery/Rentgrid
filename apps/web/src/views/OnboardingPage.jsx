@@ -142,7 +142,7 @@ export default function OnboardingPage() {
                     {roleFields.map((field) => (
                       <div key={field.name} className="space-y-2 sm:col-span-2">
                         <Label htmlFor={field.name}>{field.label}</Label>
-                        {field.name.includes('Experience') || field.name.includes('Proof') ? (
+                        {field.name.toLowerCase().includes('experience') || field.name.toLowerCase().includes('proof') ? (
                           <Textarea
                             id={field.name}
                             placeholder={field.placeholder}

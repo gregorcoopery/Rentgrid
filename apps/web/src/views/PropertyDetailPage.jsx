@@ -48,7 +48,7 @@ const PropertyDetailPage = () => {
             'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2',
           ],
           pricing: {
-            monthly: Math.round(data.price / 10),
+            monthly: Math.round(data.price / 12),
             yearly: data.price,
           },
           amenities: (data.amenities || []).map((amenityId) => ({
@@ -314,9 +314,7 @@ const PropertyDetailPage = () => {
                           ₦{propertyData.pricing.yearly.toLocaleString()}
                         </p>
                         <p className="text-sm text-muted-foreground mt-1 font-medium">per year</p>
-                        <Badge variant="secondary" className="mt-3 bg-green-100 text-green-800 border-none font-semibold">
-                          Save ₦{(propertyData.pricing.monthly * 12 - propertyData.pricing.yearly).toLocaleString()}
-                        </Badge>
+                        <p className="text-xs text-muted-foreground mt-2">Equivalent to ₦{propertyData.pricing.monthly.toLocaleString()}/month</p>
                       </div>
                     </TabsContent>
                   </Tabs>

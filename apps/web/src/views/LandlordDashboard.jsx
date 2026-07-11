@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { LayoutDashboard, Home, MessageSquare, Users, Wallet, Settings, Plus, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useClerkDashboardUser } from '@/hooks/use-clerk-dashboard-user';
@@ -46,7 +47,7 @@ const LandlordDashboard = () => {
         />
 
         {/* Main Content */}
-        <main className="flex-1 flex flex-col min-w-0">
+        <main className="flex-1 flex flex-col min-w-0 pt-14 lg:pt-0">
           {/* Top Header */}
           <header className="h-16 border-b border-border/50 bg-background flex items-center justify-between px-4 sm:px-6 lg:px-8">
             <div className="flex items-center flex-1">
@@ -170,22 +171,27 @@ const LandlordDashboard = () => {
                   </Button>
                 </CardHeader>
                 <CardContent className="p-4">
-                  <div className="divide-y divide-border/50">
-                    <div className="py-4 flex justify-between items-center">
-                      <div>
-                        <p className="font-semibold text-foreground">Luxury 2-Bed Apartment</p>
-                        <p className="text-xs text-muted-foreground">Lekki Phase 1, Lagos • ₦3.5M/yr</p>
-                      </div>
-                      <Badge className="bg-green-100 text-green-800 border-none">Verified</Badge>
+                  {properties.length === 0 ? (
+                    <div className="p-8 text-center">
+                      <Home className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+                      <p className="font-medium text-foreground">No properties listed yet</p>
+                      <p className="text-sm text-muted-foreground mt-1">Add your first property to get started.</p>
                     </div>
-                    <div className="py-4 flex justify-between items-center">
-                      <div>
-                        <p className="font-semibold text-foreground">Cozy Studio Flat</p>
-                        <p className="text-xs text-muted-foreground">Yaba, Lagos • ₦800k/yr</p>
-                      </div>
-                      <Badge className="bg-yellow-100 text-yellow-800 border-none">In Review</Badge>
+                  ) : (
+                    <div className="divide-y divide-border/50">
+                      {properties.map((prop) => (
+                        <div key={prop.id} className="py-4 flex justify-between items-center">
+                          <div>
+                            <p className="font-semibold text-foreground">{prop.name}</p>
+                            <p className="text-xs text-muted-foreground">{prop.location} • ₦{prop.price?.toLocaleString()}/yr</p>
+                          </div>
+                          <Badge className={prop.verified ? 'bg-green-100 text-green-800 border-none' : 'bg-yellow-100 text-yellow-800 border-none'}>
+                            {prop.verified ? 'Verified' : 'In Review'}
+                          </Badge>
+                        </div>
+                      ))}
                     </div>
-                  </div>
+                  )}
                 </CardContent>
               </Card>
             )}
@@ -249,7 +255,7 @@ const LandlordDashboard = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="p-4 bg-secondary/30 rounded-xl space-y-2">
-                    <p className="text-sm font-bold text-foreground">Kemi Properties Ltd</p>
+                    <p className="text-sm font-bold text-foreground">{displayName}</p>
                     <p className="text-xs text-muted-foreground">Role: Landlord</p>
                   </div>
                   <Button onClick={() => notifyDashboardAction('Settings updated', 'Settings saved successfully.')}>Save Settings</Button>

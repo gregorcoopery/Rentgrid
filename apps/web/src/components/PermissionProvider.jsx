@@ -47,15 +47,20 @@ export function PermissionProvider({ children }) {
 
     setRoleState(nextRole);
 
-    if (metadataRole === ROLE_IDS.PUBLIC && nextRole !== ROLE_IDS.PUBLIC) {
+    if (metadataRole !== ROLE_IDS.PUBLIC) {
+      if (pendingRole || window.localStorage.getItem(STORAGE_KEY)) {
+        window.localStorage.removeItem(STORAGE_KEY);
+        setPendingRole(null);
+      }
+    } else if (nextRole !== ROLE_IDS.PUBLIC) {
       user.update({
         unsafeMetadata: {
           ...user.unsafeMetadata,
           role: nextRole,
         },
       }).then(() => {
-        window.localStorage.removeItem(STORAGE_KEY);
-        setPendingRole(null);
+        // The pending role will be cleaned up on the subsequent render
+        // once the user metadata updates and propagates.
       }).catch(() => {
         setPendingRole(nextRole);
       });

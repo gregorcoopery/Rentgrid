@@ -20,7 +20,8 @@ const BrowseRentalsPage = () => {
   const initialSegment = queryParams.get('segment') === 'student' ? 'student' : 'general';
 
   const [segment, setSegment] = useState(initialSegment);
-  const [priceRange, setPriceRange] = useState([50000, 5000000]);
+  const DEFAULT_PRICE_RANGE = [50000, 5000000];
+  const [priceRange, setPriceRange] = useState(DEFAULT_PRICE_RANGE);
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [selectedRoomType, setSelectedRoomType] = useState('all');
   const [selectedAmenities, setSelectedAmenities] = useState([]);
@@ -53,7 +54,8 @@ const BrowseRentalsPage = () => {
     const currentSegment = queryParams.get('segment');
     if (currentSegment === 'student' || currentSegment === 'general') {
       setSegment(currentSegment);
-      setCurrentPage(1); // Reset page on segment change
+      setSelectedLocation('all'); // Reset location filter on segment change
+      setCurrentPage(1);
     }
   }, [location.search]);
 
@@ -116,7 +118,8 @@ const BrowseRentalsPage = () => {
     currentPage * itemsPerPage
   );
 
-  const FilterContent = () => (
+  // FilterContent receives a prefix to ensure unique IDs when rendered in multiple places
+  const FilterContent = ({ idPrefix = 'desktop' }) => (
     <div className="space-y-6">
       <div className="space-y-2">
         <label className="text-sm font-semibold text-foreground">
@@ -173,12 +176,12 @@ const BrowseRentalsPage = () => {
           {amenities.map((amenity) => (
             <div key={amenity.id} className="flex items-center space-x-2">
               <Checkbox
-                id={amenity.id}
+                id={`${idPrefix}-${amenity.id}`}
                 checked={selectedAmenities.includes(amenity.id)}
                 onCheckedChange={() => toggleAmenity(amenity.id)}
               />
               <label
-                htmlFor={amenity.id}
+                htmlFor={`${idPrefix}-${amenity.id}`}
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-muted-foreground"
               >
                 {amenity.label}
@@ -212,7 +215,7 @@ const BrowseRentalsPage = () => {
             </div>
             
             <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
-              <Tabs value={segment} onValueChange={setSegment} className="w-full sm:w-auto">
+              <Tabs value={segment} onValueChange={(val) => { setSegment(val); setSelectedLocation('all'); setCurrentPage(1); }} className="w-full sm:w-auto">
                 <TabsList className="grid w-full sm:w-[300px] grid-cols-2 h-12 rounded-full bg-secondary/50 p-1">
                   <TabsTrigger value="general" className="rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm">
                     <Building2 className="w-4 h-4 mr-2" /> General
@@ -256,7 +259,7 @@ const BrowseRentalsPage = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6">
-                  <FilterContent />
+                <FilterContent idPrefix="desktop" />
                 </CardContent>
               </Card>
             </aside>
@@ -275,7 +278,7 @@ const BrowseRentalsPage = () => {
                     <SheetTitle>Filters</SheetTitle>
                   </SheetHeader>
                   <div className="mt-6 overflow-y-auto h-[calc(100vh-100px)] pb-10">
-                    <FilterContent />
+                    <FilterContent idPrefix="mobile" />
                   </div>
                 </SheetContent>
               </Sheet>
@@ -303,7 +306,7 @@ const BrowseRentalsPage = () => {
                       setSelectedLocation('all');
                       setSelectedRoomType('all');
                       setSelectedAmenities([]);
-                      setPriceRange([30000, 5000000]);
+                      setPriceRange(DEFAULT_PRICE_RANGE);
                     }}
                   >
                     Reset Filters
@@ -320,6 +323,7 @@ const BrowseRentalsPage = () => {
                         <img
                           src={property.image}
                           alt={property.name}
+                          loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                         <Badge className={`absolute top-4 right-4 font-medium shadow-sm ${segment === 'student' ? 'bg-accent text-accent-foreground' : 'bg-primary text-primary-foreground'}`}>
@@ -399,16 +403,36 @@ const BrowseRentalsPage = () => {
                       <ChevronLeft className="w-4 h-4" />
                     </button>
                     
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                      <button
-                        key={page}
-                        className="pagination-btn font-medium text-sm"
-                        onClick={() => setCurrentPage(page)}
-                        aria-current={currentPage === page ? 'page' : undefined}
-                      >
-                        {page}
-                      </button>
-                    ))}
+                    {(() => {
+                      const pages = [];
+                      const delta = 2;
+                      const left = currentPage - delta;
+                      const right = currentPage + delta;
+                      let lastPage = null;
+                      for (let i = 1; i <= totalPages; i++) {
+                        if (i === 1 || i === totalPages || (i >= left && i <= right)) {
+                          if (lastPage && i - lastPage > 1) {
+                            pages.push(
+                              <span key={`ellipsis-${i}`} className="h-10 w-10 flex items-center justify-center text-muted-foreground text-sm">
+                                …
+                              </span>
+                            );
+                          }
+                          pages.push(
+                            <button
+                              key={i}
+                              className="pagination-btn font-medium text-sm"
+                              onClick={() => setCurrentPage(i)}
+                              aria-current={currentPage === i ? 'page' : undefined}
+                            >
+                              {i}
+                            </button>
+                          );
+                          lastPage = i;
+                        }
+                      }
+                      return pages;
+                    })()}
 
                     <button 
                       className="pagination-btn" 

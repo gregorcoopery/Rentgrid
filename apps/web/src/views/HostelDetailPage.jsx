@@ -50,7 +50,7 @@ const HostelDetailPage = () => {
             'https://images.unsplash.com/photo-1657639754502-3c138cb24b4c',
           ],
           pricing: {
-            monthly: Math.round(data.price / 10),
+            monthly: Math.round(data.price / 12),
             yearly: data.price,
           },
           amenities: (data.amenities || []).map((amenityId) => ({
@@ -186,12 +186,12 @@ const HostelDetailPage = () => {
         <meta name="description" content={`${hostelData.name} in ${hostelData.location}. ${hostelData.description.substring(0, 150)}...`} />
       </Helmet>
 
-      <div className="min-h-screen flex flex-col gradient-bg">
+      <div className="min-h-screen flex flex-col soft-bg">
         <Header />
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
           {/* Back Button */}
-          <Button variant="ghost" asChild className="mb-6 text-gray-300 hover:text-white hover:bg-white/10">
+          <Button variant="ghost" asChild className="mb-6 text-muted-foreground hover:text-foreground">
             <Link to="/browse-hostels">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Browse
@@ -341,10 +341,8 @@ const HostelDetailPage = () => {
                         <p className="text-4xl font-extrabold text-primary">
                           ₦{hostelData.pricing.yearly.toLocaleString()}
                         </p>
-                        <p className="text-sm text-gray-400 mt-1">per year</p>
-                        <Badge variant="secondary" className="mt-2 bg-accent/20 text-accent border-accent/30">
-                          Save ₦{(hostelData.pricing.monthly * 12 - hostelData.pricing.yearly).toLocaleString()}
-                        </Badge>
+                        <p className="text-sm text-muted-foreground mt-1">per year</p>
+                        <p className="text-xs text-muted-foreground mt-2">Equivalent to ₦{hostelData.pricing.monthly.toLocaleString()}/month</p>
                       </div>
                     </TabsContent>
                   </Tabs>

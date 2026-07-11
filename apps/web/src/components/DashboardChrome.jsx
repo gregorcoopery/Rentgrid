@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { SignOutButton } from '@clerk/nextjs';
-import { Bell, LogOut } from 'lucide-react';
+import { Bell, LogOut, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { submitWorkflow } from '@/lib/marketplace-client';
@@ -23,39 +23,86 @@ export async function runDashboardWorkflow(kind, title, data = {}, description =
 }
 
 export function DashboardSidebar({ portalLabel, navItems, activeSection, onSectionChange }) {
-  return (
-    <aside className="w-64 border-r border-border/50 bg-secondary/30 hidden lg:flex flex-col">
-      <div className="h-16 flex items-center px-6 border-b border-border/50">
-        <Link to="/" className="text-2xl font-extrabold text-gradient tracking-tight">RentGrid</Link>
-      </div>
-      <div className="p-4">
-        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4 px-2">{portalLabel}</p>
-        <nav className="space-y-1">
-          {navItems.map((item) => {
-            const isActive = activeSection === item.label;
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-            return (
-              <button
-                key={item.label}
-                type="button"
-                onClick={() => {
-                  onSectionChange(item.label);
-                  notifyDashboardAction(`${item.label} opened`, `Showing ${item.label.toLowerCase()} in your dashboard.`);
-                }}
-                className={`w-full flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
-                }`}
-              >
-                <item.icon className="w-5 h-5 mr-3" />
-                {item.label}
-              </button>
-            );
-          })}
-        </nav>
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <aside className="w-64 border-r border-border/50 bg-secondary/30 hidden lg:flex flex-col">
+        <div className="h-16 flex items-center px-6 border-b border-border/50">
+          <Link to="/" className="text-2xl font-extrabold text-gradient tracking-tight">RentGrid</Link>
+        </div>
+        <div className="p-4">
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4 px-2">{portalLabel}</p>
+          <nav className="space-y-1">
+            {navItems.map((item) => {
+              const isActive = activeSection === item.label;
+
+              return (
+                <button
+                  key={item.label}
+                  type="button"
+                  onClick={() => onSectionChange(item.label)}
+                  className={`w-full flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+                  }`}
+                >
+                  <item.icon className="w-5 h-5 mr-3" />
+                  {item.label}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+      </aside>
+
+      {/* Mobile Header Bar (replaces sidebar on mobile) */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 flex items-center justify-between px-4 bg-background border-b border-border/50">
+        <Link to="/" className="text-xl font-extrabold text-gradient tracking-tight">RentGrid</Link>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-medium text-muted-foreground">{activeSection}</span>
+          <button
+            type="button"
+            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+            onClick={() => setMobileMenuOpen((prev) => !prev)}
+            className="p-2 rounded-xl text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
-    </aside>
+
+      {/* Mobile Slide-Down Menu */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden fixed top-14 left-0 right-0 z-40 bg-background border-b border-border/50 shadow-lg">
+          <nav className="p-3 space-y-1">
+            {navItems.map((item) => {
+              const isActive = activeSection === item.label;
+              return (
+                <button
+                  key={item.label}
+                  type="button"
+                  onClick={() => {
+                    onSectionChange(item.label);
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`w-full flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+                  }`}
+                >
+                  <item.icon className="w-5 h-5 mr-3" />
+                  {item.label}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -72,7 +119,11 @@ export function DashboardHeaderActions({ initials, avatarClassName = 'bg-primary
       >
         <Bell className="h-5 w-5" />
       </Button>
-      <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold border ${avatarClassName}`}>
+      <div
+        className={`w-9 h-9 rounded-full flex items-center justify-center font-bold border ${avatarClassName}`}
+        role="img"
+        aria-label="User avatar"
+      >
         {initials}
       </div>
       <SignOutButton redirectUrl="/">
